@@ -13,10 +13,18 @@ router.get("/",async(req,res) =>{
     }
 })
 router.get("/:id",async(req,res) =>{
-    const id=req.params
+    const id=req.params.id;
     try {
        const products = await prisma.products.findFirst({
-        where :{id:id}
+        where :{id:id},
+        select:{
+            productThumbnail:true,
+            productTitle:true,
+            productDescription:true,
+            productCost: true,
+            onOffer:true
+        }
+
        });
        res.status(201).json(products)
     } catch (e) {
