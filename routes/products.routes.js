@@ -4,11 +4,24 @@ const prisma = new PrismaClient()
 
 const router = Router();
 
-router.get("/",(req,res) =>{
-    res.send("getting all the products")
+router.get("/",async(req,res) =>{
+    try {
+      const products = await prisma.products.findMany();
+      res.status(201).json(products)
+    } catch (e) {
+        res.status(500).json({success:false,message:e.message})
+    }
 })
-router.get("/:id",(req,res) =>{
-    res.send("getting a single the products")
+router.get("/:id",async(req,res) =>{
+    const id=req.params
+    try {
+       const products = await prisma.products.findFirst({
+        where :{id:id}
+       });
+       res.status(201).json(products)
+    } catch (e) {
+        res.status(500).json({success:false,message:["products not found"]})
+    }
 })
 router.post("/",async(req,res) =>{
     try {
@@ -21,6 +34,7 @@ router.post("/",async(req,res) =>{
                 productCost: productCost,
                 onOffer:onOffer
             }
+            
         })
         res.status(201).json(newproduct);
     } catch (e) {
